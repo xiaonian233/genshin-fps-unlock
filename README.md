@@ -10,10 +10,9 @@
  - 理论上支持后续版本，不需要更新源码
  - 如果需要更新我会尽快更新
  - [下载](https://github.com/xiaonian233/genshin-fps-unlock/releases/)
-
-## 编译
-
- - 用VS2019编译，其他版本的也应该可以，没测试过
+## 自定义参数启动
+ - 给unlockfps.exe创建一个快捷方式，在快捷方式的属性处加上需要的参数例如-popupwindow，支持多参数
+ - ![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/de6eeeda-9cf6-4ce4-8559-67011b7d944c)
 ## 食用指南
  - 第一次运行的话先以管理员运行，然后手动打开游戏，这样解锁器能够获取到游戏路经并保存在配置文件里，这只需要执行一次，以后就可以直接用解锁器启动游戏了
  - 解锁器放哪都行
