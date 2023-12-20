@@ -311,11 +311,8 @@ int main(int argc, char** argv)
     LPVOID ua = (LPVOID)((uintptr_t)up + hUnityPlayer.modBaseSize);
     ReadProcessMemory(pi.hProcess, hUserAssembly.modBaseAddr, ua, hUserAssembly.modBaseSize, nullptr);
     printf("Searching for pattern...\n");
-    /*
-         7F 0F              jg   0x11
-         8B 05 ? ? ? ?      mov eax, dword ptr[rip+?]
-    */
-    uintptr_t address = PatternScan(ua, "E8 ? ? ? ? 85 C0 7E 07 E8 ? ? ? ? EB 05");
+
+    uintptr_t address = PatternScan(ua, "B9 3C 00 00 00 FF 15");
     if (!address)
     {
         printf("outdated pattern\n");
@@ -326,8 +323,8 @@ int main(int argc, char** argv)
     uintptr_t pfps = 0;
     {
         uintptr_t rip = address;
-        rip += *(int32_t*)(rip + 1) + 5;
-        rip += *(int32_t*)(rip + 3) + 7;
+        rip += 5;
+		rip += *(int32_t*)(rip + 2) + 6;
         uintptr_t ptr = 0;
         uintptr_t data = rip - (uintptr_t)ua + (uintptr_t)hUserAssembly.modBaseAddr;
         while (!ptr)
