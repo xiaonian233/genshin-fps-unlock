@@ -1,12 +1,12 @@
 # 原神解锁FPS限制
 
-ver 4.2
-![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/2fcc9001-d609-496c-beb5-5a2080f0b818)
+ver 4.3
+![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/ead12590-fad1-4eb5-8ff6-c6ab3b4c7e83)
 
 
- - **！重要：原git已经不再维护，3.8失效，简单的维护了一下 3.8可用。这小东西我挺喜欢的**
+ - **！重要：4.3以下版本暂不支持**
  - **！重要2：Release里面的版本都是通用的，有时候只是懒得水版本号**
-
+ - **！重要3：如果需要更多功能请下载34736384的unlock_clr,本repo只是简单的解锁并无其它功能**
 **感谢Euphony_Facetious以及34736384两位作者的开源**
 
  - 工作原理通过**WriteProcessMemory**把FPS数值写进游戏
