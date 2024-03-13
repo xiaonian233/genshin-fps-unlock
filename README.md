@@ -1,7 +1,7 @@
 # 原神解锁FPS限制
 
 ver 4.5
-![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/4c575087-6542-48e5-b626-54bf7e94e149)
+![image1](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/4c575087-6542-48e5-b626-54bf7e94e149)
 
 
 
