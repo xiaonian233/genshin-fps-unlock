@@ -16,11 +16,11 @@
 std::string GamePath{};
 int FpsValue = FPS_TARGET;
 
-// ç‰¹å¾æœç´¢ - ä¸æ˜¯æˆ‘å†™çš„ - å¿˜äº†åœ¨å“ªæ‹·çš„
+// ÌØÕ÷ËÑË÷ - ²»ÊÇÎÒĞ´µÄ - ÍüÁËÔÚÄÄ¿½µÄ
 uintptr_t PatternScan(void* module, const char* signature)
 {
     static auto pattern_to_byte = [](const char* pattern) {
-        auto bytes = std::vector<int>{};
+        auto bytes = std::vector<uint8_t>{};
         auto start = const_cast<char*>(pattern);
         auto end = const_cast<char*>(pattern) + strlen(pattern);
 
@@ -73,7 +73,7 @@ std::string GetLastErrorAsString(DWORD code)
     return ret;
 }
 
-// è·å–ç›®æ ‡è¿›ç¨‹DLLä¿¡æ¯
+// »ñÈ¡Ä¿±ê½ø³ÌDLLĞÅÏ¢
 bool GetModule(DWORD pid, std::string ModuleName, PMODULEENTRY32 pEntry)
 {
     if (!pEntry)
@@ -98,7 +98,7 @@ bool GetModule(DWORD pid, std::string ModuleName, PMODULEENTRY32 pEntry)
     return pEntry->modBaseAddr;
 }
 
-// é€šè¿‡è¿›ç¨‹åæœç´¢è¿›ç¨‹ID
+// Í¨¹ı½ø³ÌÃûËÑË÷½ø³ÌID
 DWORD GetPID(std::string ProcessName)
 {
     DWORD pid = 0;
@@ -145,16 +145,16 @@ void LoadConfig()
     INIReader reader("fps_config.ini");
     if (reader.ParseError() != 0)
     {
-        printf("é…ç½®ä¸å­˜åœ¨\nè¯·ä¸è¦å…³é—­æ­¤è¿›ç¨‹ - ç„¶åæ‰‹åŠ¨å¼€å¯æ¸¸æˆ\nè¿™åªéœ€è¦è¿›è¡Œä¸€æ¬¡ - ç”¨äºè·å–æ¸¸æˆè·¯ç»\n");
-        printf("\nç­‰å¾…æ¸¸æˆå¯åŠ¨...\n");
+        printf("ÅäÖÃ²»´æÔÚ\nÇë²»Òª¹Ø±Õ´Ë½ø³Ì - È»ºóÊÖ¶¯¿ªÆôÓÎÏ·\nÕâÖ»ĞèÒª½øĞĞÒ»´Î - ÓÃÓÚ»ñÈ¡ÓÎÏ·Â·¾­\n");
+        printf("\nµÈ´ıÓÎÏ·Æô¶¯...\n");
 
         DWORD pid = 0;
         while (!(pid = GetPID("YuanShen.exe")) && !(pid = GetPID("GenshinImpact.exe")))
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-        // è·å–è¿›ç¨‹å¥æŸ„ - è¿™æƒé™å¾ˆä½çš„äº† - ä¸åº”è¯¥è·å–ä¸äº†
-        // PROCESS_QUERY_LIMITED_INFORMATION - ç”¨äºæŸ¥è¯¢è¿›ç¨‹è·¯ç» (K32GetModuleFileNameExA)
-        // SYNCHRONIZE - ç”¨äºç­‰å¾…è¿›ç¨‹ç»“æŸ (WaitForSingleObject)
+        // »ñÈ¡½ø³Ì¾ä±ú - ÕâÈ¨ÏŞºÜµÍµÄÁË - ²»Ó¦¸Ã»ñÈ¡²»ÁË
+        // PROCESS_QUERY_LIMITED_INFORMATION - ÓÃÓÚ²éÑ¯½ø³ÌÂ·¾­ (K32GetModuleFileNameExA)
+        // SYNCHRONIZE - ÓÃÓÚµÈ´ı½ø³Ì½áÊø (WaitForSingleObject)
         HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, FALSE, pid);
         if (!hProcess)
         {
@@ -195,13 +195,13 @@ void LoadConfig()
 
     if (GetFileAttributesA(GamePath.c_str()) == INVALID_FILE_ATTRIBUTES)
     {
-        printf("é…ç½®é‡Œçš„æ¸¸æˆè·¯ç»æ”¹å˜äº† - å¼€å§‹é‡æ–°é…ç½®\n");
+        printf("ÅäÖÃÀïµÄÓÎÏ·Â·¾­¸Ä±äÁË - ¿ªÊ¼ÖØĞÂÅäÖÃ\n");
         DeleteFileA("config.ini");
         LoadConfig();
     }
 }
 
-// çƒ­é”®çº¿ç¨‹
+// ÈÈ¼üÏß³Ì
 DWORD __stdcall Thread1(LPVOID p)
 {
     if (!p)
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
             CommandLine += argv[i] + std::string(" ");
     }
 
-    // è¯»å–é…ç½®
+    // ¶ÁÈ¡ÅäÖÃ
     LoadConfig();
     int TargetFPS = FpsValue;
     std::string ProcessPath = GamePath;
@@ -260,16 +260,16 @@ int main(int argc, char** argv)
     if (ProcessPath.length() < 8)
         return 0;
 
-    printf("FPS è§£é”å™¨ v1.4.2\n");
-    printf("æ¸¸æˆè·¯ç»: %s\n\n", ProcessPath.c_str());
+    printf("FPS ½âËøÆ÷ v1.4.2\n");
+    printf("ÓÎÏ·Â·¾­: %s\n\n", ProcessPath.c_str());
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));
 
     DWORD pid = GetPID(ProcessPath.substr(ProcessPath.find_last_of("\\") + 1));
     if (pid)
     {
-        printf("æ£€æµ‹åˆ°æ¸¸æˆå·²åœ¨è¿è¡Œï¼\n");
-        printf("æ‰‹åŠ¨å¯åŠ¨æ¸¸æˆä¼šå¯¼è‡´å¤±æ•ˆçš„\n");
-        printf("è¯·æ‰‹åŠ¨å…³é—­æ¸¸æˆ - è§£é”å™¨ä¼šè‡ªåŠ¨å¯åŠ¨æ¸¸æˆ\n");
+        printf("¼ì²âµ½ÓÎÏ·ÒÑÔÚÔËĞĞ£¡\n");
+        printf("ÊÖ¶¯Æô¶¯ÓÎÏ·»áµ¼ÖÂÊ§Ğ§µÄ\n");
+        printf("ÇëÊÖ¶¯¹Ø±ÕÓÎÏ· - ½âËøÆ÷»á×Ô¶¯Æô¶¯ÓÎÏ·\n");
         return 0;
     }
 
@@ -285,7 +285,7 @@ int main(int argc, char** argv)
     CloseHandle(pi.hThread);
     printf("PID: %d\n", pi.dwProcessId);
 
-    // ç­‰å¾…UnityPlayer.dllåŠ è½½å’Œè·å–DLLä¿¡æ¯
+    // µÈ´ıUnityPlayer.dll¼ÓÔØºÍ»ñÈ¡DLLĞÅÏ¢
     MODULEENTRY32 hUnityPlayer{};
     MODULEENTRY32 hUserAssembly{};
     while (!GetModule(pi.dwProcessId, "UnityPlayer.dll", &hUnityPlayer))
@@ -293,10 +293,10 @@ int main(int argc, char** argv)
     while (!GetModule(pi.dwProcessId, "UserAssembly.dll", &hUserAssembly))
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    printf("UnityPlayer: %X%X\n", (uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1, hUnityPlayer.modBaseAddr);
-    printf("UserAssembly: %X%X\n", (uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1, hUserAssembly.modBaseAddr);
+    printf("UnityPlayer: %p%p\n",  reinterpret_cast<void*>((uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1), (void*)hUnityPlayer.modBaseAddr);
+    printf("UserAssembly: %p%p\n", reinterpret_cast<void*>((uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1), (void*)hUserAssembly.modBaseAddr);
 
-    // åœ¨æœ¬è¿›ç¨‹å†…ç”³è¯·UnityPlayer.dllå¤§å°çš„å†…å­˜ - ç”¨äºç‰¹å¾æœç´¢
+    // ÔÚ±¾½ø³ÌÄÚÉêÇëUnityPlayer.dll´óĞ¡µÄÄÚ´æ - ÓÃÓÚÌØÕ÷ËÑË÷
     //LPVOID mem = VirtualAlloc(nullptr, hUnityPlayer.modBaseSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     LPVOID up = VirtualAlloc(nullptr, hUnityPlayer.modBaseSize + hUserAssembly.modBaseSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     if (!up)
@@ -306,7 +306,12 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    // æŠŠæ•´ä¸ªæ¨¡å—è¯»å‡ºæ¥
+    // °ÑÕû¸öÄ£¿é¶Á³öÀ´
+    if (hUnityPlayer.modBaseAddr == nullptr || hUserAssembly.modBaseAddr == nullptr) {
+        printf("invalid module base address: %p: %p\n", reinterpret_cast<void*>(hUnityPlayer.modBaseAddr), reinterpret_cast<void*>(hUserAssembly.modBaseAddr));
+        return 0;
+    }
+
     ReadProcessMemory(pi.hProcess, hUnityPlayer.modBaseAddr, up, hUnityPlayer.modBaseSize, nullptr);
     LPVOID ua = (LPVOID)((uintptr_t)up + hUnityPlayer.modBaseSize);
     ReadProcessMemory(pi.hProcess, hUserAssembly.modBaseAddr, ua, hUserAssembly.modBaseSize, nullptr);
@@ -319,7 +324,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    // è®¡ç®—ç›¸å¯¹åœ°å€ (FPS)
+    // ¼ÆËãÏà¶ÔµØÖ· (FPS)
     uintptr_t pfps = 0;
     {
         uintptr_t rip = address;
@@ -337,11 +342,11 @@ int main(int argc, char** argv)
             rip += *(int32_t*)(rip + 1) + 5;
         pfps = rip + *(int32_t*)(rip + 2) + 6;
         pfps -= (uintptr_t)up;
-        printf("FPS Offset: %X\n", pfps);
+        printf("FPS Offset: %p\n", (void*)pfps);
         pfps = (uintptr_t)hUnityPlayer.modBaseAddr + pfps;
     }
 
-    // è®¡ç®—ç›¸å¯¹åœ°å€ (å‚ç›´åŒæ­¥)
+    // ¼ÆËãÏà¶ÔµØÖ· (´¹Ö±Í¬²½)
     address = PatternScan(up, "E8 ? ? ? ? 8B E8 49 8B 1E");
     uintptr_t pvsync = 0;
     if (address)
@@ -353,7 +358,7 @@ int main(int argc, char** argv)
         uint64_t rax = *(uint32_t*)(rip + 3);
         ppvsync = rip + rax + 7;
         ppvsync -= (uintptr_t)up;
-        printf("VSync Offset: %X\n", ppvsync);
+        printf("VSync Offset: %p\n", (void*)ppvsync);
         ppvsync = (uintptr_t)hUnityPlayer.modBaseAddr + ppvsync;
 
         uintptr_t buffer = 0;
@@ -370,13 +375,13 @@ int main(int argc, char** argv)
 
     VirtualFree(up, 0, MEM_RELEASE);
     printf("Done\n\n");
-    printf("ç”¨å³ctrl + ç®­å¤´é”®æ›´æ”¹é™åˆ¶:\n");
-    printf("  å³ctrl + ä¸Š: +20\n");
-    printf("  å³ctrl + ä¸‹: -20\n");
-    printf("  å³ctrl + å·¦: -2\n");
-    printf("  å³ctrl + å³: +2\n\n");
+    printf("ÓÃÓÒctrl + ¼ıÍ·¼ü¸ü¸ÄÏŞÖÆ:\n");
+    printf("  ÓÒctrl + ÉÏ: +20\n");
+    printf("  ÓÒctrl + ÏÂ: -20\n");
+    printf("  ÓÒctrl + ×ó: -2\n");
+    printf("  ÓÒctrl + ÓÒ: +2\n\n");
 
-    // åˆ›å»ºçƒ­é”®çº¿ç¨‹
+    // ´´½¨ÈÈ¼üÏß³Ì
     HANDLE hThread = CreateThread(nullptr, 0, Thread1, &TargetFPS, 0, nullptr);
     if (hThread)
         CloseHandle(hThread);
@@ -386,7 +391,7 @@ int main(int argc, char** argv)
     {
         GetExitCodeProcess(pi.hProcess, &dwExitCode);
 
-        // æ¯ä¸¤ç§’æ£€æŸ¥ä¸€æ¬¡
+        // Ã¿Á½Ãë¼ì²éÒ»´Î
         std::this_thread::sleep_for(std::chrono::seconds(2));
         int fps = 0;
         ReadProcessMemory(pi.hProcess, (LPVOID)pfps, &fps, sizeof(fps), nullptr);
@@ -400,7 +405,7 @@ int main(int argc, char** argv)
         if (vsync)
         {
             vsync = 0;
-            // å…³é—­å‚ç›´åŒæ­¥
+            // ¹Ø±Õ´¹Ö±Í¬²½
             WriteProcessMemory(pi.hProcess, (LPVOID)pvsync, &vsync, sizeof(vsync), nullptr);
         }
     }
