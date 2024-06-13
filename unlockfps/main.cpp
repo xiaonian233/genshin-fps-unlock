@@ -351,33 +351,6 @@ int main(int argc, char** argv)
         printf("FPS Offset: %X\n", pfps);
     }
 
-    // 计算相对地址 (垂直同步)
-    address = PatternScan(up, "E8 ? ? ? ? 8B E8 49 8B 1E");
-    uintptr_t pvsync = 0;
-    if (address)
-    {
-        uintptr_t ppvsync = 0;
-        uintptr_t rip = address;
-        int32_t rel = *(int32_t*)(rip + 1);
-        rip = rip + rel + 5;
-        uint64_t rax = *(uint32_t*)(rip + 3);
-        ppvsync = rip + rax + 7;
-        ppvsync -= (uintptr_t)up;
-        printf("VSync Offset: %X\n", ppvsync);
-        ppvsync = (uintptr_t)hUnityPlayer.modBaseAddr + ppvsync;
-
-        uintptr_t buffer = 0;
-        while (!buffer)
-        {
-            ReadProcessMemory(pi.hProcess, (LPCVOID)ppvsync, &buffer, sizeof(buffer), nullptr);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-
-        rip += 7;
-        pvsync = *(uint32_t*)(rip + 2);
-        pvsync = buffer + pvsync;
-    }
-
     VirtualFree(up, 0, MEM_RELEASE);
     printf("Done\n\n");
     printf("用右ctrl + 箭头键更改限制:\n");
@@ -405,14 +378,6 @@ int main(int argc, char** argv)
         if (fps != TargetFPS)
             WriteProcessMemory(pi.hProcess, (LPVOID)pfps, &TargetFPS, sizeof(TargetFPS), nullptr);
 
-        int vsync = 0;
-        ReadProcessMemory(pi.hProcess, (LPVOID)pvsync, &vsync, sizeof(vsync), nullptr);
-        if (vsync)
-        {
-            vsync = 0;
-            // 关闭垂直同步
-            WriteProcessMemory(pi.hProcess, (LPVOID)pvsync, &vsync, sizeof(vsync), nullptr);
-        }
     }
 
     CloseHandle(pi.hProcess);
