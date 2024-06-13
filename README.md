@@ -1,7 +1,11 @@
 # 原神解锁FPS限制
 
-ver 4.6
-![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/fa23f9e0-4ff3-4bff-adf3-6c9bb9f01058)
+ver 4.7
+![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/52d35edb-93f0-4f66-b90a-604ba1c1a911)
+
+
+ver 4.7 特别感谢：**winTEuser** 老哥支持，让我受益良多
+
 
 **4.6版本开始加入最小化版本 即如果没有错误产生，将不会出现控制台窗口（可能会有bug）如果有问题请提交issue，最小化版本和普通版本可以互相替换使用**
 
