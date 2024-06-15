@@ -3,8 +3,8 @@
 ver 4.7
 ![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/52d35edb-93f0-4f66-b90a-604ba1c1a911)
 
-**若您在B服的解锁出现了问题，请下载winTEuser老哥的版本*
-（[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），如果解决的您的问题请不要吝啬您的star
+**若您在B服的解锁出现了问题，请下载winTEuser老哥的版本
+（[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），如果解决的您的问题请不要吝啬您的star**
 
 ver 4.7 特别感谢：**winTEuser** 老哥支持，让我受益良多
 
