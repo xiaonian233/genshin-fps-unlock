@@ -6,6 +6,8 @@ ver 4.7
 **若您在B服的解锁出现了问题，请下载winTEuser老哥的版本
 （[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），如果解决的您的问题请不要吝啬您的star**
 
+**如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码**
+
 ver 4.7 特别感谢：**winTEuser** 老哥支持，让我受益良多
 
 
