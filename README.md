@@ -3,16 +3,15 @@
 ver 4.7
 ![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/52d35edb-93f0-4f66-b90a-604ba1c1a911)
 
-**若您在B服的解锁出现了问题，请下载winTEuser老哥的版本
-（[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），如果解决的您的问题请不要吝啬您的star**
-
-**如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码**
-
-ver 4.7 特别感谢：**winTEuser** 老哥支持，让我受益良多
-
+**若您觉得好用的话，请给 winTEuser 老哥的版本
+（[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），点上star进行支持**
+**如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码更新**
+## 对帧数的说明
+![)BCURWZ4 @(NW(W{BZ{Q7CV](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/20bda8d8-21a1-4ea1-8de2-57f90f177f62)
+ - **选择45档位，同步解锁器的帧率**
+ - **选择60档位，无限制帧率**
 
 **4.6版本开始加入最小化版本 即如果没有错误产生，将不会出现控制台窗口（可能会有bug）如果有问题请提交issue，最小化版本和普通版本可以互相替换使用**
-
 
  - **！重要：4.3以下版本暂不支持**
  - **！重要2：Release里面的版本都是通用的，有时候只是懒得水版本号**
@@ -23,7 +22,6 @@ ver 4.7 特别感谢：**winTEuser** 老哥支持，让我受益良多
  - 不需要通过驱动进行读写操作
  - 支持国服和外服
  - 理论上支持后续版本，不需要更新源码
- - 如果需要更新我会尽快更新
  - [下载](https://github.com/xiaonian233/genshin-fps-unlock/releases/)
 ## 自定义参数启动
  - 给unlockfps.exe创建一个快捷方式，在快捷方式的属性处加上需要的参数例如-popupwindow，支持多参数
