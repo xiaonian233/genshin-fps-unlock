@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 4.7
-![image](https://github.com/xiaonian233/genshin-fps-unlock/assets/21072615/52d35edb-93f0-4f66-b90a-604ba1c1a911)
+ver 4.8
+![0 G{PSMB6I$W{6E(V`{9@ZV](https://github.com/user-attachments/assets/e6bb2e5a-2fcf-4504-8b74-df22e6deec45)
+
 
 **若您觉得好用的话，请给 winTEuser 老哥的版本
 （[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），点上star进行支持**
