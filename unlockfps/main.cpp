@@ -26,124 +26,105 @@ const std::vector<DWORD> PrioityClass = {
    IDLE_PRIORITY_CLASS
 };
 //credit by winTEuser
-BYTE _shellcode_genshin[] =
+const BYTE _shellcode_genshin_Const[] =
 {
-    0x00, 0x00, 0x00, 0x00,                         // uint32_t unlocker_pid            _shellcode_genshin[0]
-    0x00, 0x00, 0x00, 0x00,                         // uint32_t unlocker_Handle         _shellcode_genshin[4]
+    0x00, 0x00, 0x00, 0x00,                         //uint32_t unlocker_pid             _shellcode_genshin[0]
+    0x00, 0x00, 0x00, 0x00,                         //FREE                              _shellcode_genshin[4]
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 unlocker_FpsValue_addr    _shellcode_genshin[8]
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 API_OpenProcess           _shellcode_genshin[16]
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 API_ReadProcessmem        _shellcode_genshin[24]
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 API_Sleep                 _shellcode_genshin[32]
-    0x00, 0x00, 0x00, 0x00,                         //uint32_t Readmem_buffer           _shellcode_genshin[40]
-    0xCC, 0xCC, 0xCC, 0xCC, //int3
-    0x48, 0x83, 0xEC, 0x38,                 //sub rsp,0x38                              _shellcode_genshin[48] _sync_thread
-    0x8B, 0x05, 0xC6, 0xFF, 0xFF, 0xFF,     //mov eax,dword[unlocker_pid]
-    0x85, 0xC0,                             //test eax
-    0x74, 0x5B,                             //je return
-    0x41, 0x89, 0xC0,                       //mov r8d,eax
-    0x33, 0xD2,                             //xor edx,edx
-    0xB9, 0xFF, 0xFF, 0x1F, 0x00,           //mov ecx,1FFFFF
-    0xFF, 0x15, 0xC2, 0xFF, 0xFF, 0xFF,     //call [API_OpenProcess]
-    0x85, 0xC0,                             //test eax
-    0x74, 0x47,                             //je return
-    0x89, 0x05, 0xAC, 0xFF, 0xFF, 0xFF,     //mov dword[unlocker_Handle],eax
-    0x89, 0xC6,                             //mov esi,eax
-    0x48, 0x8B, 0x3D, 0xA7, 0xFF, 0xFF, 0xFF,//mov rdi,qword[unlocker_FpsValue_addr]
-    0x0F, 0x1F, 0x00,                       //nop
-    0x89, 0xF1,                             //mov ecx,esi   //Read_tar_fps
-    0x48, 0x89, 0xFA,                       //mov rdx,rdi
-    0x4C, 0x8D, 0x05, 0xB8, 0xFF, 0xFF, 0xFF,//lea r8,qword[Readmem_buffer]
-    0x41, 0xB9, 0x04, 0x00, 0x00, 0x00,     //mov r9d,4
-    0x31, 0xC0,                             //xor eax,eax
-    0x48, 0x89, 0x44, 0x24, 0x20,           //mov qword ptr ss:[rsp+20],rax
-    0xFF, 0x15, 0x95, 0xFF, 0xFF, 0xFF,     //call [API_ReadProcessmem]
-    0x85, 0xC0,                             //test eax
-    0x74, 0x12,                             //jz return
-    0xB9, 0xE8, 0x03, 0x00, 0x00,           //mov ecx,0x3E8 (1000ms)
-    0xFF, 0x15, 0x8E, 0xFF, 0xFF, 0xFF,     //call [API_Sleep]
-    0xE8, 0x49, 0x00, 0x00, 0x00,           //call Sync_Set
-    0xEB, 0xCB,                             //jmp Read_tar_fps
-    0x48, 0x83, 0xC4, 0x38,                 //add rsp,0x38
-    0xC3,                                   //ret
-    0xCC, 0xCC,       //int3
-    0x89, 0x0D, 0x22, 0x00, 0x00, 0x00,     //mov [Game_Current_set], ecx       //hook_fps_set      _shellcode_genshin[160]
-    0xEB, 0x00,                             //nop
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 API_MessageBoxA           _shellcode_genshin[40]
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //DWORD64 API_CloseHandle           _shellcode_genshin[48]
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //FREE                              _shellcode_genshin[56]
+    //int3
+    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 
+    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 
+    //int3
+    0x48, 0x83, 0xEC, 0x38,                  //sub rsp,0x38                             _shellcode_genshin[80] _sync_thread
+    0x8B, 0x05, 0xA6, 0xFF, 0xFF, 0xFF,      //mov eax,dword[unlocker_pid]
+    0x85, 0xC0,                              //test eax, eax
+    0x74, 0x5C,                              //jz return
+    0x41, 0x89, 0xC0,                        //mov r8d, eax
+    0x33, 0xD2,                              //xor edx, edx
+    0xB9, 0xFF, 0xFF, 0x1F, 0x00,            //mov ecx,1FFFFF
+    0xFF, 0x15, 0xA2, 0xFF, 0xFF, 0xFF,      //call [API_OpenProcess]
+    0x85, 0xC0,                              //test eax, eax
+    0x74, 0x48,                              //jz return
+    0x89, 0xC6,                              //mov esi, eax
+    0x48, 0x8B, 0x3D, 0x8D, 0xFF, 0xFF, 0xFF,//mov rdi,qword[unlocker_FpsValue_addr]
+    0x0F, 0x1F, 0x44, 0x00, 0x00,            //nop
+    0x89, 0xF1,                              //mov ecx, esi          //Read_tar_fps
+    0x48, 0x89, 0xFA,                        //mov rdx, rdi
+    0x4C, 0x8D, 0x05, 0xF8, 0x00, 0x00, 0x00,//lea r8, qword:[Readmem_buffer]
+    0x41, 0xB9, 0x04, 0x00, 0x00, 0x00,      //mov r9d, 4
+    0x31, 0xC0,                              //xor eax, eax
+    0x48, 0x89, 0x44, 0x24, 0x20,            //mov qword ptr ss:[rsp+20],rax
+    0xFF, 0x15, 0x79, 0xFF, 0xFF, 0xFF,      //call [API_ReadProcessmem]
+    0x85, 0xC0,                              //test eax, eax
+    0x74, 0x12,                              //jz Show msg and closehandle
+    0xB9, 0xF4, 0x01, 0x00, 0x00,            //mov ecx,0x1F4     (500ms)
+    0xFF, 0x15, 0x72, 0xFF, 0xFF, 0xFF,      //call [API_Sleep]
+    0xE8, 0x4D, 0x00, 0x00, 0x00,            //call Sync_auto
+    0xEB, 0xCB,                              //jmp Read_tar_fps
+    0xE8, 0x66, 0x00, 0x00, 0x00,            //call Show Errormsg and CloseHandle
+    0x48, 0x83, 0xC4, 0x38,                  //add rsp,0x38
+    0xC3,                                    //return
+    0xCC,             
+    //int3
+    0x89, 0x0D, 0xBA, 0x00, 0x00, 0x00,     //mov [Game_Current_set], ecx           //hook_fps_set      _shellcode_genshin[192]
+    0x31, 0xC0,                             //xor eax, eax       
     0x83, 0xF9, 0x1E,                       //cmp ecx, 0x1E 
-    0x74, 0x0C,                             //je set 60
+    0x74, 0x0E,                             //je set 60
     0x83, 0xF9, 0x2D,                       //cmp ecx, 0x2D
-    0x74, 0x12,                             //je return
-    0xB9, 0xFF, 0xFF, 0xFF, 0xFF,           //mov ecx,[Readmem_buffer]
-    0xEB, 0x05,                             //jmp set
-    0xB9, 0x3C, 0x00, 0x00, 0x00,           //mov ecx,0x3C
-    0x89, 0x0D, 0x0D, 0x00, 0x00, 0x00,     //mov [hook_fps_get + 1],ecx
+    0x74, 0x15,                             //je Sync_buffer
+    0x90,                                   //nop
+    0xB9, 0xE8, 0x03, 0x00, 0x00,           //mov ecx, 0x3E8                    
+    0xEB, 0x06,                             //jmp set
+    0xCC, //int3                            
+    0xB9, 0x3C, 0x00, 0x00, 0x00,           //mov ecx, 0x3C                     
+    0x89, 0x0D, 0x0B, 0x00, 0x00, 0x00,     //mov [hook_fps_get+1], ecx        //set
     0xC3,                                   //ret
-    0xCC, 0xCC, 0xCC,        //int3
-    0x00, 0x00, 0x00, 0x00,                 //uint32_t Game_Current_set
-    0xCC, 0xCC, 0xCC, 0xCC,  //int3
-    0xB8,0x78, 0x00, 0x00, 0x00,            //mov eax,0x78                      //hook_fps_get      _shellcode_genshin[208]
+    0x8B, 0x0D, 0x97, 0x00, 0x00, 0x00,     //mov ecx, dword[Readmem_buffer]   //Sync_buffer
+    0xEB, 0xF1,                             //jmp set
+    0xCC, 
+    //int3
+    0xB8, 0x78, 0x00, 0x00, 0x00,           //mov eax,0x78                          //hook_fps_get      _shellcode_genshin[240]
     0xC3,                                   //ret
-    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC,//int3
-    0x56,                                   //push rsi                          //Sync_Set
-    0x57,                                   //push rdi
-    0x48, 0x83, 0xEC, 0x18,                 //sub rsp, 0x18
-    0x8B, 0x05, 0xDC, 0xFF, 0xFF, 0xFF,     //mov eax, dword[Game_Current_set]
+    //int3
+    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC,
+    //int3
+    0x8B, 0x05, 0x7A, 0x00, 0x00, 0x00,     //mov eax, dword[Game_Current_set]      //Sync_auto
     0x83, 0xF8, 0x2D,                       //cmp eax, 0x2D
     0x75, 0x0C,                             //jne return
-    0x8B, 0x05, 0x31, 0xFF, 0xFF, 0xFF,     //mov eax, dword[Game_Current_set]
-    0x89, 0x05, 0xD4, 0xFF, 0xFF, 0xFF,     //mov dword[hook_fps_get + 1], eax
-    0x48, 0x83, 0xC4, 0x18,                 //add rsp, 0x18
-    0x5F,                                   //pop rdi
-    0x5E,                                   //pop rsi
+    0x8B, 0x05, 0x73, 0x00, 0x00, 0x00,     //mov eax, dword[Readmem_buffer]
+    0x89, 0x05, 0xDA, 0xFF, 0xFF, 0xFF,     //mov dword[hook_fps_get + 1], eax
     0xC3,                                   //ret
-    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC
+    //int3
+    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 
+    //int3
+    0x48, 0x83, 0xEC, 0x28,                  //sub rsp, 0x28                        //Show Errormsg and closehandle
+    0x31, 0xC9,                              //xor ecx, ecx 
+    0x48, 0x8D, 0x15, 0x23, 0x00, 0x00, 0x00,//lea rdx, qword:["Sync failed!"]
+    0x4C, 0x8D, 0x05, 0x2C, 0x00, 0x00, 0x00,//lea r8, qword:["Error"]
+    0x41, 0xB9, 0x10, 0x00, 0x00, 0x00,      //mov r9d, 0x10 
+    0xFF, 0x15, 0xE8, 0xFE, 0xFF, 0xFF,      //call [API_MessageBoxA] 
+    0x89, 0xF1,                              //mov ecx, esi 
+    0xFF, 0x15, 0xE8, 0xFE, 0xFF, 0xFF,      //call [API_CloseHandle] 
+    0x48, 0x83, 0xC4, 0x28,                  //add rsp, 0x28
+    0xC3,                                    //ret
+    //int3
+    0xCC, 0xCC, 0xCC, 
+    'S','y','n','c',' ','f','a','i','l','e','d','!', 0x00, 0x00, 0x00, 0x00,
+    'E','r','r','o','r', 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC,
+    0x00, 0x00, 0x00, 0x00,             //uint32_t Game_Current_set  
+    0x00, 0x00, 0x00, 0x00,             //uint32_t Readmem_buffer    
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-// 特征搜索 - 不是我写的 - 忘了在哪拷的
-uintptr_t PatternScan(void* module, const char* signature)
-{
-    static auto pattern_to_byte = [](const char* pattern) {
-        auto bytes = std::vector<int>{};
-        auto start = const_cast<char*>(pattern);
-        auto end = const_cast<char*>(pattern) + strlen(pattern);
 
-        for (auto current = start; current < end; ++current) {
-            if (*current == '?') {
-                ++current;
-                if (*current == '?')
-                    ++current;
-                bytes.push_back(-1);
-            }
-            else {
-                bytes.push_back(strtoul(current, &current, 16));
-            }
-        }
-        return bytes;
-    };
-
-    auto dosHeader = (PIMAGE_DOS_HEADER)module;
-    auto ntHeaders = (PIMAGE_NT_HEADERS)((std::uint8_t*)module + dosHeader->e_lfanew);
-
-    auto sizeOfImage = ntHeaders->OptionalHeader.SizeOfImage;
-    auto patternBytes = pattern_to_byte(signature);
-    auto scanBytes = reinterpret_cast<std::uint8_t*>(module);
-
-    auto s = patternBytes.size();
-    auto d = patternBytes.data();
-
-    for (auto i = 0ul; i < sizeOfImage - s; ++i) {
-        bool found = true;
-        for (auto j = 0ul; j < s; ++j) {
-            if (scanBytes[i + j] != d[j] && d[j] != -1) {
-                found = false;
-                break;
-            }
-        }
-        if (found) {
-            return (uintptr_t)&scanBytes[i];
-        }
-    }
-    return 0;
-}
+// 特征搜索 winTEuser
 static uintptr_t PatternScan_Region(uintptr_t startAddress, size_t regionSize, const char* signature)
 {
     auto pattern_to_byte = [](const char* pattern)
@@ -227,6 +208,36 @@ bool GetModule2(HANDLE GameHandle, std::string ModuleName, PMODULEENTRY32 pEntry
 
     return false;
 }
+static bool GetModule(DWORD pid, std::string ModuleName, PMODULEENTRY32 pEntry)
+{
+    if (!pEntry)
+        return false;
+
+    MODULEENTRY32 mod32{};
+    mod32.dwSize = sizeof(mod32);
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+    bool temp = Module32First(snap, &mod32);
+    if (temp)
+    {
+        do
+        {
+            if (mod32.th32ProcessID != pid)
+            {
+                break;
+            }
+            if (mod32.szModule == ModuleName)
+            {
+                *pEntry = mod32;
+                CloseHandle(snap);
+                return 1;
+            }
+
+        } while (Module32Next(snap, &mod32));
+
+    }
+    CloseHandle(snap);
+    return 0;
+}
 // 通过进程名搜索进程ID
 DWORD GetPID(std::string ProcessName)
 {
@@ -266,206 +277,128 @@ bool WriteConfig(std::string GamePath, int fps)
     CloseHandle(hFile);
 }
 //Hotpatch
-static DWORD64 inject_patch(LPVOID unity_module, DWORD64 unity_baseaddr, DWORD64 _ptr_fps, HANDLE Tar_handle)
+static DWORD64 inject_patch(LPVOID text_buffer, DWORD text_size, DWORD64 _text_baseaddr, uint64_t _ptr_fps, HANDLE Tar_handle)
 {
-    BYTE search_sec[] = ".text";//max 8 byte
-    uintptr_t WinPEfileVA = *(uintptr_t*)(&unity_module) + 0x3c; //dos_header
-    uintptr_t PEfptr = *(uintptr_t*)(&unity_module) + *(uint32_t*)WinPEfileVA; //get_winPE_VA
-    _IMAGE_NT_HEADERS64 _FilePE_Nt_header = *(_IMAGE_NT_HEADERS64*)PEfptr;
-    _IMAGE_SECTION_HEADER _sec_temp{};
-    DWORD64 Module_TarSec_RVA;
-    DWORD64 Module_TarSecEnd_RVA;
-    DWORD Module_TarSec_Size;
-    if (_FilePE_Nt_header.Signature == 0x00004550)
-    {
-        DWORD sec_num = _FilePE_Nt_header.FileHeader.NumberOfSections;//获得指定节段参数
-        DWORD num = sec_num;
-        while (num)
-        {
-            _sec_temp = *(_IMAGE_SECTION_HEADER*)(PEfptr + 264 + (40 * (static_cast<unsigned long long>(sec_num) - num)));
-
-            //printf_s("sec_%d_is:  %s\n", sec_num - num, _sec_temp.Name);
-            int i = 8;
-            int len = sizeof(search_sec) - 1;
-            int cmp = 0;
-            while ((i != 0) && _sec_temp.Name[8 - i] && search_sec[8 - i])
-            {
-                if (_sec_temp.Name[8 - i] == search_sec[8 - i])
-                {
-                    cmp++;
-                }
-                i--;
-            }
-            if (cmp == len)
-            {
-                Module_TarSec_RVA = _sec_temp.VirtualAddress + (DWORD64)unity_module;
-                Module_TarSec_Size = _sec_temp.Misc.VirtualSize;
-                Module_TarSecEnd_RVA = Module_TarSec_RVA + Module_TarSec_Size;
-                goto __Get_target_sec;
-            }
-            num--;
-        }
-        printf_s("Get Target Section Fail !\n");
+    if (text_buffer == 0 || text_size == 0 || _text_baseaddr == 0 || _ptr_fps == 0 || Tar_handle == 0)
         return 0;
-    }
-    return 0;
 
-__Get_target_sec:
+    DWORD64 Module_TarSec_RVA = (DWORD64)text_buffer;
+    DWORD Module_TarSec_Size = text_size;
+
     DWORD64 address = 0;
+    DWORD64 Hook_addr_fpsget = 0;   //in buffer
+    DWORD64 Hook_addr_tar_fpsget = 0;
+    DWORD64 Hook_addr_fpsSet = 0;   //in buffer
+    DWORD64 Hook_addr_tar_fpsSet = 0;
+    DWORD64 _addr_tar_fpsget_TarFun = 0;
+    DWORD64 _addr_tar_fpsSet_TarFun = 0;
+    while (address = PatternScan_Region(Module_TarSec_RVA, text_size, "CC 8B 05 ?? ?? ?? ?? C3 CC"))//搜索正确hook点位//get_fps
     {
-        DWORD64 Hook_addr_fpsget = 0;   //in buffer
-        DWORD64 Hook_addr_tar_fpsget = 0;
-        DWORD64 Hook_addr_fpsSet = 0;   //in buffer
-        DWORD64 Hook_addr_tar_fpsSet = 0;
-        DWORD64 _addr_tar_fpsget_TarFun = 0;
-        DWORD64 _addr_tar_fpsSet_TarFun = 0;
-        while (address = PatternScan_Region(Module_TarSec_RVA, Module_TarSec_Size, "CC 8B 05 ?? ?? ?? ?? C3 CC"))//搜索正确patch点位//get_fps
+        uintptr_t rip = address;
+        rip += 3;
+        rip += *(int32_t*)(rip)+4;
+        if ((rip - (uintptr_t)Module_TarSec_RVA + (uintptr_t)_text_baseaddr) == _ptr_fps)
         {
-            uintptr_t rip = address;
-            rip += 3;
-            rip += *(int32_t*)(rip)+4;
-            if ((rip - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr) == _ptr_fps)
-            {
-                Hook_addr_fpsget = address + 1;
-                Hook_addr_tar_fpsget = Hook_addr_fpsget - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr;
-                goto __Get_fpsGet_addr;
-            }
-            else
-            {
-                *(uint64_t*)(address + 1) = 0xCCCCCCCCCCCCCCCC;
-            }
-        }
-        printf_s("\nPatch pattern1 outdate...\n");
-        return 0;
-
-    __Get_fpsGet_addr:
-        while (address = PatternScan_Region(Module_TarSec_RVA, Module_TarSec_Size, "CC 89 0D ?? ?? ?? ?? C3 CC"))//搜索正确patch点位//set_fps
-        {
-            uintptr_t rip = address;
-            rip += 3;
-            rip += *(int32_t*)(rip)+4;
-            if ((rip - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr) == _ptr_fps)
-            {
-                Hook_addr_fpsSet = address + 1;
-                Hook_addr_tar_fpsSet = Hook_addr_fpsSet - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr;
-                goto __Get_fpsSet_addr;
-            }
-            else
-            {
-                *(uint64_t*)(address + 1) = 0xCCCCCCCCCCCCCCCC;
-            }
-        }
-        printf_s("\nPatch pattern2 outdate...\n");
-        return 0;
-
-    __Get_fpsSet_addr:
-        uint64_t _Addr_OpenProcess = 0;
-        uint64_t _Addr_ReadProcessmem = 0;
-        uint64_t _Addr_Sleep = 0;
-        if (address = PatternScan_Region(Module_TarSec_RVA, Module_TarSec_Size, "33 D2 B9 00 04 00 00 FF 15 ?? ?? ?? ??"))//get API OpenProcess
-        {
-            uintptr_t rip = address;
-            rip += 9;
-            rip += *(int32_t*)(rip)+4;
-            if (*(uint64_t*)(rip) == 0)
-            {
-                rip = rip - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr;
-                while (_Addr_OpenProcess == 0)
-                {
-                    if (ReadProcessMemory(Tar_handle, (LPCVOID)rip, &_Addr_OpenProcess, 8, 0) == 0)
-                    {
-                        DWORD ERR_code = GetLastError();
-                        printf_s("\nGet Target Openprocess API Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-                        return 0;
-                    }
-                }
-            }
-            else { _Addr_OpenProcess = *(uint64_t*)rip; }
-        }
-        if (address = PatternScan_Region(Module_TarSec_RVA, Module_TarSec_Size, "48 89 44 24 20 FF 15 ?? ?? ?? ?? 48 8B 54 24 70"))//get API ReadProcmem
-        {
-            uintptr_t rip = address;
-            rip += 7;
-            rip += *(int32_t*)(rip)+4;
-            if (*(uint64_t*)(rip) == 0)
-            {
-                rip = rip - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr;
-                while (_Addr_ReadProcessmem == 0)
-                {
-                    if (ReadProcessMemory(Tar_handle, (LPCVOID)rip, &_Addr_ReadProcessmem, 8, 0) == 0)
-                    {
-                        DWORD ERR_code = GetLastError();
-                        printf_s("\nGet Target Readprocmem API Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-                        return 0;
-                    }
-                }
-            }
-            else { _Addr_ReadProcessmem = *(uint64_t*)rip; }
-        }
-        if (address = PatternScan_Region(Module_TarSec_RVA, Module_TarSec_Size, "41 8B C8 FF 15 ?? ?? ?? ?? 8B C7"))//get API Sleep
-        {
-            uintptr_t rip = address;
-            rip += 5;
-            rip += *(int32_t*)(rip)+4;
-            if (*(uint64_t*)(rip) == 0)
-            {
-                rip = rip - (uintptr_t)unity_module + (uintptr_t)unity_baseaddr;
-                while (_Addr_Sleep == 0)
-                {
-                    if (ReadProcessMemory(Tar_handle, (LPCVOID)rip, &_Addr_Sleep, 8, 0) == 0)
-                    {
-                        DWORD ERR_code = GetLastError();
-                        printf_s("\nGet Target Sleep API Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-                        return 0;
-                    }
-                }
-            }
-            else { _Addr_Sleep = *(uint64_t*)rip; }
-        }
-        *(uint32_t*)(&_shellcode_genshin) = GetCurrentProcessId();    //unlocker PID
-        *(uint64_t*)(&_shellcode_genshin[8]) = (uint64_t)(&FpsValue); //unlocker fps set
-        *(uint64_t*)(&_shellcode_genshin[16]) = _Addr_OpenProcess;
-        *(uint64_t*)(&_shellcode_genshin[24]) = _Addr_ReadProcessmem;
-        *(uint64_t*)(&_shellcode_genshin[32]) = _Addr_Sleep;
-        LPVOID __Tar_proc_buffer = VirtualAllocEx(Tar_handle, 0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-        if (__Tar_proc_buffer)
-        {
-            if (WriteProcessMemory(Tar_handle, __Tar_proc_buffer, &_shellcode_genshin, sizeof(_shellcode_genshin), 0));
-            {
-                _addr_tar_fpsSet_TarFun = (uint64_t)__Tar_proc_buffer + 160;
-                _addr_tar_fpsget_TarFun = (uint64_t)__Tar_proc_buffer + 208;
-                *(uint64_t*)Hook_addr_fpsget = 0xCCCCCCCCCCCCCCCC;
-                *(uint64_t*)Hook_addr_fpsSet = 0xCCCCCCCCCCCCCCCC;
-                *(uint64_t*)Hook_addr_fpsget = 0x25FF;
-                *(uint64_t*)(Hook_addr_fpsget + 6) = _addr_tar_fpsget_TarFun;
-                *(uint64_t*)Hook_addr_fpsSet = 0x25FF;
-                *(uint64_t*)(Hook_addr_fpsSet + 6) = _addr_tar_fpsSet_TarFun;
-                if (WriteProcessMemory(Tar_handle, (LPVOID)Hook_addr_tar_fpsget, (LPVOID)Hook_addr_fpsget, 0x10, 0) == 0)
-                {
-                    DWORD ERR_code = GetLastError();
-                    printf_s("\nHook get_fps Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-                }
-                if (WriteProcessMemory(Tar_handle, (LPVOID)Hook_addr_tar_fpsSet, (LPVOID)Hook_addr_fpsSet, 0x10, 0) == 0)
-                {
-                    DWORD ERR_code = GetLastError();
-                    printf_s("\nHook get_fps Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-                }
-                HANDLE temp = CreateRemoteThread(Tar_handle, 0, 0, (LPTHREAD_START_ROUTINE)((uint64_t)__Tar_proc_buffer + 0x30), 0, 0, 0);
-                if (temp)
-                {
-                    CloseHandle(temp);
-                }
-                return ((uint64_t)__Tar_proc_buffer + 0xD1);
-            }
-            DWORD ERR_code = GetLastError();
-            printf_s("\nWrite Patch Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
+            Hook_addr_fpsget = address + 1;
+            Hook_addr_tar_fpsget = Hook_addr_fpsget - (uintptr_t)Module_TarSec_RVA + (uintptr_t)_text_baseaddr;
+            goto __Get_fpsGet_addr;
         }
         else
         {
-            DWORD ERR_code = GetLastError();
-            printf_s("\nVirtual Alloc Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
-            return 0;
+            *(uint64_t*)(address + 1) = 0xCCCCCCCCCCCCCCCC;
         }
+    }
+    printf_s("Get get_fps pattern Fail! \n");
+    return 0;
+
+__Get_fpsGet_addr:
+    while (address = PatternScan_Region(Module_TarSec_RVA, text_size, "CC 89 0D ?? ?? ?? ?? C3 CC"))//搜索正确hook点位//set_fps
+    {
+        uintptr_t rip = address;
+        rip += 3;
+        rip += *(int32_t*)(rip)+4;
+        if ((rip - (uintptr_t)Module_TarSec_RVA + (uintptr_t)_text_baseaddr) == _ptr_fps)
+        {
+            Hook_addr_fpsSet = address + 1;
+            Hook_addr_tar_fpsSet = Hook_addr_fpsSet - (uintptr_t)Module_TarSec_RVA + (uintptr_t)_text_baseaddr;
+            goto __Get_fpsSet_addr;
+        }
+        else
+        {
+            *(uint64_t*)(address + 1) = 0xCCCCCCCCCCCCCCCC;
+        }
+    }
+    printf_s("Get set_fps pattern Fail! \n");
+
+__Get_fpsSet_addr:
+    uint64_t _shellcode_buffer = (uint64_t)VirtualAlloc(0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (_shellcode_buffer == 0)
+    {
+        printf_s("Buffer Alloc Fail! \n");
+        return 0;
+    }
+    memcpy((void*)_shellcode_buffer, &_shellcode_genshin_Const, sizeof(_shellcode_genshin_Const));
+
+    uint64_t _Addr_OpenProcess = (uint64_t)(&OpenProcess);
+    uint64_t _Addr_ReadProcessmem = (uint64_t)(&ReadProcessMemory);
+    uint64_t _Addr_Sleep = (uint64_t)(&Sleep);
+    uint64_t _Addr_MessageBoxA = (uint64_t)(&MessageBoxA);
+    uint64_t _Addr_CloseHandle = (uint64_t)(&CloseHandle);
+    *(uint32_t*)_shellcode_buffer = GetCurrentProcessId();       //unlocker PID
+    *(uint64_t*)(_shellcode_buffer + 8) = (uint64_t)(&FpsValue); //unlocker fps ptr
+    *(uint64_t*)(_shellcode_buffer + 16) = _Addr_OpenProcess;
+    *(uint64_t*)(_shellcode_buffer + 24) = _Addr_ReadProcessmem;
+    *(uint64_t*)(_shellcode_buffer + 32) = _Addr_Sleep;
+    *(uint64_t*)(_shellcode_buffer + 40) = _Addr_MessageBoxA;
+    *(uint64_t*)(_shellcode_buffer + 48) = _Addr_CloseHandle;
+    *(uint32_t*)(_shellcode_buffer + 0xD4) = 1000;
+    *(uint32_t*)(_shellcode_buffer + 0xDC) = 60;
+    LPVOID __Tar_proc_buffer = VirtualAllocEx(Tar_handle, 0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    if (__Tar_proc_buffer)
+    {
+        if (WriteProcessMemory(Tar_handle, __Tar_proc_buffer, (void*)_shellcode_buffer, sizeof(_shellcode_genshin_Const), 0))
+        {
+            VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
+            _addr_tar_fpsSet_TarFun = (uint64_t)__Tar_proc_buffer + 0xC0;
+            _addr_tar_fpsget_TarFun = (uint64_t)__Tar_proc_buffer + 0xF0;
+            *(uint64_t*)Hook_addr_fpsget = 0xB848;                          //hook        mov rax,[jmp addr]
+            *(uint64_t*)(Hook_addr_fpsget + 2) = _addr_tar_fpsget_TarFun;
+            *(uint16_t*)(Hook_addr_fpsget + 10) = 0xE0FF;                   //            jmp rax
+            *(uint64_t*)Hook_addr_fpsSet = 0xB848;
+            *(uint64_t*)(Hook_addr_fpsSet + 2) = _addr_tar_fpsSet_TarFun;
+            *(uint16_t*)(Hook_addr_fpsSet + 10) = 0xE0FF;
+            if (WriteProcessMemory(Tar_handle, (LPVOID)Hook_addr_tar_fpsget, (LPVOID)Hook_addr_fpsget, 0x10, 0) == 0)
+            {
+                DWORD ERR_code = GetLastError();
+                printf_s("\nHook Get_fps Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
+                return 0;
+            }
+            if (WriteProcessMemory(Tar_handle, (LPVOID)Hook_addr_tar_fpsSet, (LPVOID)Hook_addr_fpsSet, 0x10, 0) == 0)
+            {
+                DWORD ERR_code = GetLastError();
+                printf_s("\nHook Set_fps Fail! ( 0x%X ) - %s\n", ERR_code, GetLastErrorAsString(ERR_code).c_str());
+                return 0;
+            }
+            HANDLE temp = CreateRemoteThread(Tar_handle, 0, 0, (LPTHREAD_START_ROUTINE)((uint64_t)__Tar_proc_buffer + 0x50), 0, 0, 0);
+            if (temp)
+            {
+                CloseHandle(temp);
+            }
+            else
+            {
+                printf_s("Create InGame SyncThread Fail! ");
+                return 0;
+            }
+            return ((uint64_t)__Tar_proc_buffer + 0xF1);
+        }
+        printf_s("Inject shellcode Fail! ");
+        VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
+        return 0;
+    }
+    else
+    {
+        printf_s("Alloc shellcode space Fail! ");
+        return 0;
     }
 }
 
@@ -485,8 +418,6 @@ void LoadConfig()
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
         // 获取进程句柄 - 这权限很低的了 - 不应该获取不了
-        // PROCESS_QUERY_LIMITED_INFORMATION - 用于查询进程路经 (K32GetModuleFileNameExA)
-        // SYNCHRONIZE - 用于等待进程结束 (WaitForSingleObject)
         HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE | PROCESS_TERMINATE, FALSE, pid);
         if (!hProcess)
         {
@@ -595,8 +526,9 @@ int main(int argc, char** argv)
     printf("https://github.com/xiaonian233/genshin-fps-unlock \n4.7版本特别感谢winTEuser老哥支持 \n");
     printf("游戏路经: %s\n\n", ProcessPath.c_str());
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));
+    std::string procname = ProcessPath.substr(ProcessPath.find_last_of("\\") + 1);
 
-    DWORD pid = GetPID(ProcessPath.substr(ProcessPath.find_last_of("\\") + 1));
+    DWORD pid = GetPID(procname);
     if (pid)
     {
         printf("检测到游戏已在运行！\n");
@@ -616,44 +548,124 @@ int main(int argc, char** argv)
 
     CloseHandle(pi.hThread);
     printf("PID: %d\n", pi.dwProcessId);
+    Sleep(200);
     StartPriority = PrioityClass[1];
     SetPriorityClass(pi.hProcess, StartPriority);
-
     // 等待UnityPlayer.dll加载和获取DLL信息
     MODULEENTRY32 hUnityPlayer{};
-    while (!GetModule2(pi.hProcess, "UnityPlayer.dll", &hUnityPlayer))
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
+    {
+        DWORD times = 1000;
+        while (times != 0)
+        {
+            if (GetModule2(pi.hProcess, procname, &hUnityPlayer))
+            {
+                goto __get_procbase_ok;
+            }
+            Sleep(50);
+            times -= 5;
+        }
+        printf("Get BaseModule time out! \n");
+        CloseHandle(pi.hProcess);
+        return (int)-1;
+    }
+    {
+        DWORD times = 1000;
+        while (!GetModule2(pi.hProcess, "UnityPlayer.dll", &hUnityPlayer))
+        {
+            Sleep(50);
+            times -= 5;
+            if (GetModule2(pi.hProcess, "unityplayer.dll", &hUnityPlayer))
+            {
+                goto __get_procbase_ok;
+            }
+            if (times == 0)
+            {
+                printf("Get Unitymodule time out! \n");
+                CloseHandle(pi.hProcess);
+                return (int)-1;
+            }
+        }
+    }
     printf("UnityPlayer: %X%X\n", (uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1, hUnityPlayer.modBaseAddr);
-
-
-    // 在本进程内申请UnityPlayer.dll大小的内存 - 用于特征搜索
-    LPVOID up = VirtualAlloc(nullptr, hUnityPlayer.modBaseSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    if (!up)
+    __get_procbase_ok:
+    LPVOID _mbase_PE_buffer = VirtualAlloc(NULL, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (_mbase_PE_buffer == 0)
     {
-        DWORD code = GetLastError();
-        printf("VirtualAlloc UP failed (%d): %s", code, GetLastErrorAsString(code).c_str());
-        return 0;
+        printf_s("VirtualAlloc Failed! (PE_buffer)");
+        CloseHandle(pi.hProcess);
+        return (int)-1;
     }
+    if (hUnityPlayer.modBaseAddr == 0)
+        return (int)-1;
+    if (ReadProcessMemory(pi.hProcess, hUnityPlayer.modBaseAddr, _mbase_PE_buffer, 0x1000, 0) == 0)
+    {
+        printf_s("Readmem Failed! (PE_buffer)");
+        VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
+        CloseHandle(pi.hProcess);
+        return (int)-1;
+    }
+    BYTE search_sec[8] = ".text";//max 8 byte
+    uint64_t tar_sec = *(uint64_t*)&search_sec;
+    uintptr_t WinPEfileVA = *(uintptr_t*)(&_mbase_PE_buffer) + 0x3c; //dos_header
+    uintptr_t PEfptr = *(uintptr_t*)(&_mbase_PE_buffer) + *(uint32_t*)WinPEfileVA; //get_winPE_VA
+    _IMAGE_NT_HEADERS64 _FilePE_Nt_header = *(_IMAGE_NT_HEADERS64*)PEfptr;
+    _IMAGE_SECTION_HEADER _sec_temp{};
+    uintptr_t Text_Remote_RVA;
+    uint32_t Text_Vsize;
+    if (_FilePE_Nt_header.Signature == 0x00004550)
+    {
+        DWORD sec_num = _FilePE_Nt_header.FileHeader.NumberOfSections;//获得指定节段参数
+        DWORD num = sec_num;
+        DWORD target_sec_VA_start = 0;
+        while (num)
+        {
+            _sec_temp = *(_IMAGE_SECTION_HEADER*)(PEfptr + 264 + (40 * (static_cast<unsigned long long>(sec_num) - num)));
 
+            //printf_s("sec_%d_is:  %s\n", sec_num - num, _sec_temp.Name);
+
+            if (*(uint64_t*)(_sec_temp.Name) == tar_sec)
+            {
+                target_sec_VA_start = _sec_temp.VirtualAddress;
+                Text_Vsize = _sec_temp.Misc.VirtualSize;
+                Text_Remote_RVA = (uintptr_t)hUnityPlayer.modBaseAddr + target_sec_VA_start;
+                goto __Get_target_sec;
+            }
+            num--;
+        }
+    }
+    else
+    {
+        printf_s("Invalid PE header!");
+        VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
+        CloseHandle(pi.hProcess);
+        return (int)-1;
+    }
+__Get_target_sec:
+    // 在本进程内申请代码段大小的内存 - 用于特征搜索
+    LPVOID Copy_Text_VA = VirtualAlloc(0, Text_Vsize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (Copy_Text_VA == NULL)
+    {
+        printf("VirtualAlloc Failed! (Text)");
+        CloseHandle(pi.hProcess);
+        return (int)-1;
+    }
     // 把整个模块读出来
-    if (!ReadProcessMemory(pi.hProcess, hUnityPlayer.modBaseAddr, up, hUnityPlayer.modBaseSize, nullptr))
+    if (ReadProcessMemory(pi.hProcess, (void*)Text_Remote_RVA, Copy_Text_VA, Text_Vsize, 0) == 0)
     {
-        DWORD code = GetLastError();
-        printf("ReadProcessMemory unity failed (%d): %s", code, GetLastErrorAsString(code).c_str());
-        return 0;
+        printf("Readmem Fail ! (text)");
+        VirtualFree(Copy_Text_VA, 0, MEM_RELEASE);
+        CloseHandle(pi.hProcess);
+        return (int)-1;
     }
-
 
     printf("Searching for pattern...\n");
 
 	//credit by winTEuser
-	
-    uintptr_t address = PatternScan(up, "7F 0E E8 ?? ?? ?? ?? 66 0F 6E C8"); // ver 3.7 - last 
+    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "7F 0E E8 ?? ?? ?? ?? 66 0F 6E C8"); // ver 3.7 - last 
     if (!address)
     {
-            printf("outdated pattern\n");
-            return 0;
+        printf("outdated pattern\n");
+        return 0;
     }
 
     // 计算相对地址 (FPS)
@@ -663,19 +675,20 @@ int main(int argc, char** argv)
         rip += 3;
         rip += *(int32_t*)(rip)+6;
         rip += *(int32_t*)(rip)+4;
-        pfps = rip - (uintptr_t)up + (uintptr_t)hUnityPlayer.modBaseAddr;
+        pfps = rip - (uintptr_t)Copy_Text_VA + Text_Remote_RVA;
         printf("FPS Offset: %X\n", pfps);
     }
     uintptr_t Patch_ptr = 0;
     {
-        Patch_ptr = inject_patch(up, (DWORD64)hUnityPlayer.modBaseAddr, pfps, pi.hProcess);//45 patch config
+        Patch_ptr = inject_patch(Copy_Text_VA, Text_Vsize, Text_Remote_RVA, pfps, pi.hProcess);//patch inject 
         if (Patch_ptr == NULL)
         {
             printf_s("Inject Patch Fail!\n\n");
         }
     }
 
-    VirtualFree(up, 0, MEM_RELEASE);
+    VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
+    VirtualFree(Copy_Text_VA, 0, MEM_RELEASE);
     printf("Done\n\n");
     printf("用右ctrl + 箭头键更改限制:\n");
     printf("  右ctrl + 上: +20\n");
