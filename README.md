@@ -6,6 +6,7 @@ ver 4.8
 
 **若您觉得好用的话，请给 winTEuser 老哥的版本
 （[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），点上star进行支持**
+ - **要是觉得本项目挺好用的话，也可以点个star支持一下**
 **如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码更新**
  - **本项目仅仅只有解锁FPS的功能，若您还有星铁解锁需求，可以查看 winTEuser 老哥的版本**
 ## 对帧数的说明
