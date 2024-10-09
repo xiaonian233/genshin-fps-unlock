@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 5.0 未有新的更新，同4.8
-![{CF S%5DDI2(9F 8I~VHS_S](https://github.com/user-attachments/assets/be18bf7b-1f3a-4c79-9b7f-14631e2a1c7a)
+ver 5.1 未有新的更新，同4.8
+![L6AP MUYZX~KVJFF@VE~$0U](https://github.com/user-attachments/assets/281f580b-bcd3-491a-9e31-b204e816406c)
+
 
 
 
