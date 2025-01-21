@@ -4,16 +4,11 @@ ver 5.3 未有新的更新
 ![image](https://github.com/user-attachments/assets/712e1df9-2146-423e-b52c-daa3af104c79)
 
 
-
-
-
-
 **若您觉得好用的话，请给 winTEuser 老哥的版本
 （[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），点上star进行支持**
  - **要是觉得本项目挺好用的话，也可以点个star支持一下**
-
-**如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码更新**
  - **本项目仅仅只有解锁FPS的功能，若您还有星铁解锁需求，可以查看 winTEuser 老哥的版本**
+ - **如果没有什么意外的话，本项目将跟随 winTEuser老哥 版本的代码更新**
 
 **4.6版本开始加入最小化版本 即如果没有错误产生，将不会出现控制台窗口（可能会有bug）如果有问题请提交issue，最小化版本和普通版本可以互相替换使用**
 
@@ -52,3 +47,6 @@ ver 5.3 未有新的更新
 - 至于为啥我没写成能在和游戏同一个目录下运行是因为游戏登录的时候会进行文件完整性检测，如果游戏目录内有其他文件也会当做是游戏的文件进行检测。如果把解锁器和游戏放一起的话游戏会把解锁器当成游戏文件检测，从而导致报错（31-4302）
 - 要转载的话随便，毕竟开源，可以的话就注明下出处
 - 这么个破工具请不要拿去倒卖
+# Sponsor/感谢赞助
+<a href="https://yxvm.com/aff.php?aff=650" target="_blank"><img src="https://github.com/user-attachments/assets/8a7f8b32-7a3f-45b6-94e0-5c5494245611" height="75"></a> 
+本服务由<a href="https://yxvm.com/aff.php?aff=650" target="_blank">YxVM</a>支持，YxVM 为您提供高性价比的VPS主机。
