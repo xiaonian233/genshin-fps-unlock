@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 5.3 未有新的更新
-![image](https://github.com/user-attachments/assets/712e1df9-2146-423e-b52c-daa3af104c79)
+ver 5.4
+![WEZA{`J26U4Z)BTF BAGT2M](https://github.com/user-attachments/assets/43e37f3c-197f-415c-906d-fc0587c05059)
+
 
 
 **若您觉得好用的话，请给 winTEuser 老哥的版本
