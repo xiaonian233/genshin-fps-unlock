@@ -584,7 +584,7 @@ __Get_target_sec:
     printf("Searching for pattern...\n");
 
 	//credit by winTEuser
-    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "7F 0E E8 ?? ?? ?? ?? 66 0F 6E C8"); // ver 3.7 - last 
+    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "7E 0C E8 ?? ?? ?? ?? 66 0F 6E C8 0F 5B C9"); // ver 3.7 - last 
     if (!address)
     {
         printf("outdated pattern\n");
