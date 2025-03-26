@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 5.4
-![WEZA{`J26U4Z)BTF BAGT2M](https://github.com/user-attachments/assets/43e37f3c-197f-415c-906d-fc0587c05059)
+ver 5.5
+![ESX5_TM$K11 U%JKY 1CQ6](https://github.com/user-attachments/assets/71910360-4a61-469a-a85f-160ad86cdf45)
+
 
 
 
