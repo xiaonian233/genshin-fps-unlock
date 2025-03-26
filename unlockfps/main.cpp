@@ -445,7 +445,7 @@ int main(int argc, char** argv)
     if (ProcessPath.length() < 8)
         return 0;
 
-    printf("FPS解锁 好用的话点个star吧 4.8\n");
+    printf("FPS解锁 好用的话点个star吧 5.5\n");
     printf("https://github.com/xiaonian233/genshin-fps-unlock \n特别感谢winTEuser老哥 \n");
     printf("游戏路经: %s\n\n", ProcessPath.c_str());
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));
@@ -584,7 +584,7 @@ __Get_target_sec:
     printf("Searching for pattern...\n");
 
 	//credit by winTEuser
-    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "7E 0C E8 ?? ?? ?? ?? 66 0F 6E C8 0F 5B C9"); // ver 3.7 - last 
+    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "8B 0D ?? ?? ?? ?? 66 0F 6E C9 0F 5B C9"); 
     if (!address)
     {
         printf("outdated pattern\n");
@@ -595,8 +595,7 @@ __Get_target_sec:
     uintptr_t pfps = 0;
     {
         uintptr_t rip = address;
-        rip += 3;
-        rip += *(int32_t*)(rip)+6;
+        rip += 2;
         rip += *(int32_t*)(rip)+4;
         pfps = rip - (uintptr_t)Copy_Text_VA + Text_Remote_RVA;
         printf("FPS Offset: %X\n", pfps);
