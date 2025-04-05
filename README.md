@@ -50,5 +50,6 @@ ver 5.5
 - 要转载的话随便，毕竟开源，可以的话就注明下出处
 - 这么个破工具请不要拿去倒卖
 # Sponsor/感谢赞助
-<a href="https://yxvm.com/aff.php?aff=650" target="_blank"><img src="https://github.com/user-attachments/assets/8a7f8b32-7a3f-45b6-94e0-5c5494245611" height="75"></a> 
-本服务由<a href="https://yxvm.com/aff.php?aff=650" target="_blank">YxVM</a>支持，YxVM 为您提供高性价比的VPS主机。
+<a href="https://yxvm.com/aff.php?aff=650" target="_blank"><img src="https://i.postimg.cc/XvT30P5J/image.png" width="250"/></a>
+[NodeSupport](https://github.com/NodeSeekDev/NodeSupport) Sponsored this project
+
