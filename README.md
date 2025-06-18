@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 5.6 未有新的更新，直接用上一版本即可
-![RND1`QOHE)L%J%~M $`2RIS](https://github.com/user-attachments/assets/abe99c22-3aa9-41b2-8c9e-04ec0144259c)
+ver 5.7 未有新的更新，直接用上一版本即可。歪了莫娜，不想玩辣
+![T1})0CRY$P@H}@M{0`CI)IH](https://github.com/user-attachments/assets/44674611-d4ca-48ee-a191-f2772ef031f8)
+
 
 
 
