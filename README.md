@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 5.8 未有新的更新，直接用上一版本即可。歪了莫娜，不想玩辣
-<img width="1180" height="662" alt="image" src="https://github.com/user-attachments/assets/c757cf13-258f-437d-b5b3-a5286052ffcb" />
+ver 6.0 未有新的更新，直接用最新release即可。
+<img width="1477" height="660" alt="image" src="https://github.com/user-attachments/assets/2f114930-7b4f-4748-ade3-dab8741f1b72" />
+
 
 **为了更多可能性，引入34736384佬的.net版本，若一个版本有问题可尝试另一分支版本，在net分支下，我将其功能仅仅保留解锁FPS，使用方式同主分支版本，暂时还不能通过热键更改FPS值。代码均来自34736384**
 两版本的配置文件通用
