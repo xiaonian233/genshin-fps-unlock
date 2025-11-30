@@ -35,7 +35,4 @@ ver 6.0 未有新的更新，直接用最新release即可。
 - **右ctrl + 下方向键** 减少FPS上限 （-20）
 - **右ctrl + 左方向键** 减少FPS上限 （-2）
 - 源里默认的FPS数值是120
-# Sponsor/感谢赞助
-<a href="https://yxvm.com/aff.php?aff=650" target="_blank"><img src="https://i.postimg.cc/XvT30P5J/image.png" width="250"/></a>
-[NodeSupport](https://github.com/NodeSeekDev/NodeSupport) Sponsored this project
 
