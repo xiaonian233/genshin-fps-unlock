@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
-ver 6.0 未有新的更新，直接用最新release即可。
-<img width="1477" height="660" alt="image" src="https://github.com/user-attachments/assets/2f114930-7b4f-4748-ade3-dab8741f1b72" />
+ver 6.3 未有新的更新，直接用最新release即可。
+<<img width="1535" height="892" alt="image" src="https://github.com/user-attachments/assets/fb81ceda-3672-4131-92e4-4a8ead7cb684" />
+
 **2025年11月15日再测试看，改为120帧左右看起来是稳定了，不建议再上调**
 
 **为了更多可能性，引入34736384佬的.net版本，若一个版本有问题可尝试另一分支版本，在net分支下，我将其功能仅仅保留解锁FPS，使用方式同主分支版本，暂时还不能通过热键更改FPS值。代码均来自34736384**
