@@ -25,6 +25,7 @@ const std::vector<DWORD> PrioityClass = {
    BELOW_NORMAL_PRIORITY_CLASS,
    IDLE_PRIORITY_CLASS
 };
+// 特征搜索
 //credit by winTEuser
 const BYTE _shellcode_genshin_Const[] =
 {
@@ -127,8 +128,7 @@ const BYTE _shellcode_genshin_Const[] =
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-
-// 特征搜索 winTEuser
+// 特征搜索(winTEuser)
 static uintptr_t PatternScan_Region(uintptr_t startAddress, size_t regionSize, const char* signature)
 {
     auto pattern_to_byte = [](const char* pattern)
@@ -188,6 +188,8 @@ static bool GetModule(DWORD pid, std::string ModuleName, PMODULEENTRY32 pEntry)
     MODULEENTRY32 mod32{};
     mod32.dwSize = sizeof(mod32);
     HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+    if (snap == INVALID_HANDLE_VALUE)
+        return false;
     bool temp = Module32First(snap, &mod32);
     if (temp)
     {
@@ -247,83 +249,70 @@ bool WriteConfig(std::string GamePath, int fps)
     DWORD written = 0;
     WriteFile(hFile, content.data(), content.size(), &written, nullptr);
     CloseHandle(hFile);
+    return true;
 }
-//Hotpatch
+
+//Hotpatch - 注入shellcode到游戏进程
 static DWORD64 inject_patch(LPVOID text_buffer, DWORD text_size, DWORD64 _text_baseaddr, uint64_t _ptr_fps, HANDLE Tar_handle)
 {
-    if (text_buffer == 0 || text_size == 0 || _text_baseaddr == 0 || _ptr_fps == 0 || Tar_handle == 0)
+    if (!text_buffer || !text_size || !_text_baseaddr || !_ptr_fps || !Tar_handle)
         return 0;
 
-    DWORD64 Module_TarSec_RVA = (DWORD64)text_buffer;
-    DWORD Module_TarSec_Size = text_size;
-
-    DWORD64 address = 0;
-    DWORD64 Hook_addr_fpsget = 0;   //in buffer
-    DWORD64 Hook_addr_tar_fpsget = 0;
-    DWORD64 Hook_addr_fpsSet = 0;   //in buffer
-    DWORD64 Hook_addr_tar_fpsSet = 0;
-    DWORD64 _addr_tar_fpsget_TarFun = 0;
-    DWORD64 _addr_tar_fpsSet_TarFun = 0;
-	
-__Get_fpsSet_addr:
+    // 在本地分配并准备shellcode
     uint64_t _shellcode_buffer = (uint64_t)VirtualAlloc(0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    if (_shellcode_buffer == 0)
+    if (!_shellcode_buffer)
     {
         printf_s("Buffer Alloc Fail! \n");
         return 0;
     }
     memcpy((void*)_shellcode_buffer, &_shellcode_genshin_Const, sizeof(_shellcode_genshin_Const));
 
-    uint64_t _Addr_OpenProcess = (uint64_t)(&OpenProcess);
-    uint64_t _Addr_ReadProcessmem = (uint64_t)(&ReadProcessMemory);
-    uint64_t _Addr_Sleep = (uint64_t)(&Sleep);
-    uint64_t _Addr_MessageBoxA = (uint64_t)(&MessageBoxA);
-    uint64_t _Addr_CloseHandle = (uint64_t)(&CloseHandle);
-    *(uint32_t*)_shellcode_buffer = GetCurrentProcessId();       //unlocker PID
-    *(uint64_t*)(_shellcode_buffer + 8) = (uint64_t)(&FpsValue); //unlocker fps ptr
-    *(uint64_t*)(_shellcode_buffer + 16) = _Addr_OpenProcess;
-    *(uint64_t*)(_shellcode_buffer + 24) = _Addr_ReadProcessmem;
-    *(uint64_t*)(_shellcode_buffer + 32) = _Addr_Sleep;
-    *(uint64_t*)(_shellcode_buffer + 40) = _Addr_MessageBoxA;
-    *(uint64_t*)(_shellcode_buffer + 48) = _Addr_CloseHandle;
+    // 填充shellcode参数
+    *(uint32_t*)_shellcode_buffer = GetCurrentProcessId();
+    *(uint64_t*)(_shellcode_buffer + 8) = (uint64_t)(&FpsValue);
+    *(uint64_t*)(_shellcode_buffer + 16) = (uint64_t)(&OpenProcess);
+    *(uint64_t*)(_shellcode_buffer + 24) = (uint64_t)(&ReadProcessMemory);
+    *(uint64_t*)(_shellcode_buffer + 32) = (uint64_t)(&Sleep);
+    *(uint64_t*)(_shellcode_buffer + 40) = (uint64_t)(&MessageBoxA);
+    *(uint64_t*)(_shellcode_buffer + 48) = (uint64_t)(&CloseHandle);
     *(uint32_t*)(_shellcode_buffer + 0xE4) = 1000;
     *(uint32_t*)(_shellcode_buffer + 0xEC) = 60;
-
-    *(uint64_t*)(_shellcode_buffer + 0x110) = 0xB848;                //mov rax, game_pfps
-    *(uint64_t*)(_shellcode_buffer + 0x118) = 0x741D8B0000;          //mov ebx, dword[Readmem_buffer]
-    *(uint64_t*)(_shellcode_buffer + 0x120) = 0xCCCCCCCCCCC31889;    //mov [rax], ebx 
-    *(uint64_t*)(_shellcode_buffer + 0x112) = _ptr_fps;              //ret
-    *(uint64_t*)(_shellcode_buffer + 0x15C) = 0x5C76617E8834858;    //keep thread
+    *(uint64_t*)(_shellcode_buffer + 0x110) = 0xB848;
+    *(uint64_t*)(_shellcode_buffer + 0x118) = 0x741D8B0000;
+    *(uint64_t*)(_shellcode_buffer + 0x120) = 0xCCCCCCCCCCC31889;
+    *(uint64_t*)(_shellcode_buffer + 0x112) = _ptr_fps;
+    *(uint64_t*)(_shellcode_buffer + 0x15C) = 0x5C76617E8834858;
     *(uint64_t*)(_shellcode_buffer + 0x164) = 0xE0FF21EBFFFFFF16;
 
+    // 在目标进程分配内存并写入shellcode
     LPVOID __Tar_proc_buffer = VirtualAllocEx(Tar_handle, 0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-    if (__Tar_proc_buffer)
+    if (!__Tar_proc_buffer)
     {
-        if (WriteProcessMemory(Tar_handle, __Tar_proc_buffer, (void*)_shellcode_buffer, sizeof(_shellcode_genshin_Const), 0))
-        {
-            VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
-            HANDLE temp = CreateRemoteThread(Tar_handle, 0, 0, (LPTHREAD_START_ROUTINE)((uint64_t)__Tar_proc_buffer + 0x50), 0, 0, 0);
-            if (temp)
-            {
-                CloseHandle(temp);
-            }
-            else
-            {
-                printf_s("Create InGame SyncThread Fail! ");
-                return 0;
-            }
-            return ((uint64_t)__Tar_proc_buffer + 0x194);
-        }
+        printf_s("Alloc shellcode space Fail! ");
+        VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
+        return 0;
+    }
+
+    if (!WriteProcessMemory(Tar_handle, __Tar_proc_buffer, (void*)_shellcode_buffer, sizeof(_shellcode_genshin_Const), 0))
+    {
         printf_s("Inject shellcode Fail! ");
         VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
         return 0;
     }
-    else
+
+    VirtualFree((void*)_shellcode_buffer, 0, MEM_RELEASE);
+
+    // 创建远程线程执行shellcode
+    HANDLE temp = CreateRemoteThread(Tar_handle, 0, 0, (LPTHREAD_START_ROUTINE)((uint64_t)__Tar_proc_buffer + 0x50), 0, 0, 0);
+    if (!temp)
     {
-        printf_s("Alloc shellcode space Fail! ");
+        printf_s("Create InGame SyncThread Fail! ");
         return 0;
     }
+    CloseHandle(temp);
+    return ((uint64_t)__Tar_proc_buffer + 0x194);
 }
+
 
 void LoadConfig()
 {
@@ -333,7 +322,7 @@ void LoadConfig()
     INIReader reader("fps_config.ini");
     if (reader.ParseError() != 0)
     {
-        printf("配置不存在\n请不要关闭此进程 - 然后手动开启游戏\n这只需要进行一次 - 用于获取游戏路经\n");
+        printf("配置不存在\n请不要关闭此进程 - 然后手动开启游戏\n这只需要进行一次 - 用于获取游戏路径\n");
         printf("\n等待游戏启动...\n");
 
         DWORD pid = 0;
@@ -381,11 +370,26 @@ void LoadConfig()
 
     if (GetFileAttributesA(GamePath.c_str()) == INVALID_FILE_ATTRIBUTES)
     {
-        printf("配置里的游戏路经改变了 - 开始重新配置\n");
+        printf("配置里的游戏路径改变了 - 开始重新配置\n");
         DeleteFileA("config.ini");
         LoadConfig();
     }
 }
+static bool WaitForBaseModule(DWORD pid, const std::string& procname, MODULEENTRY32& out, DWORD timeout_ms = 50000)
+{
+    const DWORD step = 50;
+    DWORD waited = 0;
+    while (waited < timeout_ms)
+    {
+        if (GetModule(pid, procname, &out))
+            return true;
+
+        Sleep(step);
+        waited += step;
+    }
+    return false;
+}
+
 
 // 热键线程
 DWORD __stdcall Thread1(LPVOID p)
@@ -445,9 +449,9 @@ int main(int argc, char** argv)
     if (ProcessPath.length() < 8)
         return 0;
 
-    printf("FPS解锁 好用的话点个star吧 5.5\n");
+    printf("FPS解锁 好用的话点个star吧 6.3\n");
     printf("https://github.com/xiaonian233/genshin-fps-unlock \n特别感谢winTEuser老哥 \n");
-    printf("游戏路经: %s\n\n", ProcessPath.c_str());
+    printf("游戏路径: %s\n\n", ProcessPath.c_str());
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));
     std::string procname = ProcessPath.substr(ProcessPath.find_last_of("\\") + 1);
 
@@ -474,83 +478,58 @@ int main(int argc, char** argv)
     Sleep(200);
     StartPriority = PrioityClass[1];
     SetPriorityClass(pi.hProcess, StartPriority);
-    // 等待UnityPlayer.dll加载和获取DLL信息
-    MODULEENTRY32 hUnityPlayer{};
+
+    MODULEENTRY32 hBaseModule{};
+    if (!WaitForBaseModule(pi.dwProcessId, procname, hBaseModule, 50000))
     {
-        DWORD times = 1000;
-        while (times != 0)
-        {
-            if (GetModule(pi.dwProcessId, procname, &hUnityPlayer))
-            {
-                goto __get_procbase_ok;
-            }
-            Sleep(50);
-            times -= 5;
-        }
-        printf("Get BaseModule time out! \n");
+        printf("Get BaseModule Failed! \n");
         CloseHandle(pi.hProcess);
         return (int)-1;
     }
-    {
-        DWORD times = 1000;
-        while (!GetModule(pi.dwProcessId, "UnityPlayer.dll", &hUnityPlayer))
-        {
-            Sleep(50);
-            times -= 5;
-            if (GetModule(pi.dwProcessId, "unityplayer.dll", &hUnityPlayer))
-            {
-                goto __get_procbase_ok;
-            }
-            if (times == 0)
-            {
-                printf("Get Unitymodule time out! \n");
-                CloseHandle(pi.hProcess);
-                return (int)-1;
-            }
-        }
-    }
-    printf("UnityPlayer: %X%X\n", (uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1, hUnityPlayer.modBaseAddr);
-__get_procbase_ok:
+    printf("BaseModule(%s): 0x%llX\n", procname.c_str(), (unsigned long long)(uintptr_t)hBaseModule.modBaseAddr);
+
+    // 步骤1: 读取PE头（前4KB），用于解析PE结构
     LPVOID _mbase_PE_buffer = VirtualAlloc(NULL, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    if (_mbase_PE_buffer == 0)
+    if (!_mbase_PE_buffer || !hBaseModule.modBaseAddr)
     {
         printf_s("VirtualAlloc Failed! (PE_buffer)");
         CloseHandle(pi.hProcess);
         return (int)-1;
     }
-    if (hUnityPlayer.modBaseAddr == 0)
-        return (int)-1;
-    if (ReadProcessMemory(pi.hProcess, hUnityPlayer.modBaseAddr, _mbase_PE_buffer, 0x1000, 0) == 0)
+
+    if (ReadProcessMemory(pi.hProcess, hBaseModule.modBaseAddr, _mbase_PE_buffer, 0x1000, 0) == 0)
     {
         printf_s("Readmem Failed! (PE_buffer)");
         VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
         CloseHandle(pi.hProcess);
         return (int)-1;
     }
+    // 步骤2: 解析PE结构，定位.text节
     BYTE search_sec[8] = ".text";//max 8 byte
     uint64_t tar_sec = *(uint64_t*)&search_sec;
-    uintptr_t WinPEfileVA = *(uintptr_t*)(&_mbase_PE_buffer) + 0x3c; //dos_header
-    uintptr_t PEfptr = *(uintptr_t*)(&_mbase_PE_buffer) + *(uint32_t*)WinPEfileVA; //get_winPE_VA
+    uintptr_t WinPEfileVA = *(uintptr_t*)(&_mbase_PE_buffer) + 0x3c; //dos_header->e_lfanew
+    uintptr_t PEfptr = *(uintptr_t*)(&_mbase_PE_buffer) + *(uint32_t*)WinPEfileVA; //PE头地址
     _IMAGE_NT_HEADERS64 _FilePE_Nt_header = *(_IMAGE_NT_HEADERS64*)PEfptr;
     _IMAGE_SECTION_HEADER _sec_temp{};
     uintptr_t Text_Remote_RVA;
     uint32_t Text_Vsize;
-    if (_FilePE_Nt_header.Signature == 0x00004550)
+    if (_FilePE_Nt_header.Signature == 0x00004550) // "PE\0\0"
     {
-        DWORD sec_num = _FilePE_Nt_header.FileHeader.NumberOfSections;//获得指定节段参数
+        DWORD sec_num = _FilePE_Nt_header.FileHeader.NumberOfSections;//节数量
         DWORD num = sec_num;
         DWORD target_sec_VA_start = 0;
         while (num)
         {
+            // 节表位置 = PE头 + 264字节（NT头大小）+ 节索引*40字节（每个节头40字节）
             _sec_temp = *(_IMAGE_SECTION_HEADER*)(PEfptr + 264 + (40 * (static_cast<unsigned long long>(sec_num) - num)));
 
             //printf_s("sec_%d_is:  %s\n", sec_num - num, _sec_temp.Name);
 
-            if (*(uint64_t*)(_sec_temp.Name) == tar_sec)
+            if (*(uint64_t*)(_sec_temp.Name) == tar_sec) // 找到.text节
             {
                 target_sec_VA_start = _sec_temp.VirtualAddress;
                 Text_Vsize = _sec_temp.Misc.VirtualSize;
-                Text_Remote_RVA = (uintptr_t)hUnityPlayer.modBaseAddr + target_sec_VA_start;
+                Text_Remote_RVA = (uintptr_t)hBaseModule.modBaseAddr + target_sec_VA_start;
                 goto __Get_target_sec;
             }
             num--;
@@ -564,18 +543,21 @@ __get_procbase_ok:
         return (int)-1;
     }
 __Get_target_sec:
-    // 在本进程内申请代码段大小的内存 - 用于特征搜索
+    // 在本进程内申请.text节大小的内存 - 用于特征搜索
     LPVOID Copy_Text_VA = VirtualAlloc(0, Text_Vsize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    if (Copy_Text_VA == NULL)
+    if (!Copy_Text_VA)
     {
         printf("VirtualAlloc Failed! (Text)");
+        VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
         CloseHandle(pi.hProcess);
         return (int)-1;
     }
-    // 把整个模块读出来
+    // 从目标进程读取整个.text节到本地内存
+    // 这样特征搜索在本地进行，避免频繁跨进程读取，提高效率
     if (ReadProcessMemory(pi.hProcess, (void*)Text_Remote_RVA, Copy_Text_VA, Text_Vsize, 0) == 0)
     {
         printf("Readmem Fail ! (text)");
+        VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
         VirtualFree(Copy_Text_VA, 0, MEM_RELEASE);
         CloseHandle(pi.hProcess);
         return (int)-1;
@@ -583,32 +565,38 @@ __Get_target_sec:
 
     printf("Searching for pattern...\n");
 
-	//credit by winTEuser
-    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "8B 0D ?? ?? ?? ?? 66 0F 6E C9 0F 5B C9"); 
+    uintptr_t address = PatternScan_Region((uintptr_t)Copy_Text_VA, Text_Vsize, "8B 0D ?? ?? ?? ?? EB ?? 33 C0"); 
     if (!address)
     {
-        printf("outdated pattern\n");
+        printf("过期了，去github催更\n");
+        VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
+        VirtualFree(Copy_Text_VA, 0, MEM_RELEASE);
+        CloseHandle(pi.hProcess);
         return 0;
     }
 
-    // 计算相对地址 (FPS)
+    printf("Pattern found at offset: %p\n", (void*)(address - (uintptr_t)Copy_Text_VA));
+
+    // 计算FPS变量的实际地址
+    // 8B 0D 指令格式: mov ecx, [rip + offset]
+    // offset 在指令的第2-5字节（即 +2 位置开始的4字节）
     uintptr_t pfps = 0;
     {
-        uintptr_t rip = address;
-        rip += 2;
-        rip += *(int32_t*)(rip)+4;
-        pfps = rip - (uintptr_t)Copy_Text_VA + Text_Remote_RVA;
-        printf("FPS Offset: %X\n", pfps);
-        goto __offset_ok;
+        uintptr_t rip = address + 6;  // 指令长度为6字节 (8B 0D + 4字节偏移)
+        int32_t offset = *(int32_t*)(address + 2);  // 读取偏移量
+        
+        // 计算相对于模块基址的实际地址
+        uintptr_t local_fps_addr = rip + offset;
+        pfps = local_fps_addr - (uintptr_t)Copy_Text_VA + Text_Remote_RVA;
+         
+        printf("Module base address: 0x%llX\n", (uintptr_t)hBaseModule.modBaseAddr);
+        printf("FPS variable address: 0x%llX\n", pfps);
     }
-__offset_ok:
-    uintptr_t Patch_ptr = 0;
+    // 注入shellcode，在游戏进程内部修改FPS（避免访问被拒绝）
+    uintptr_t Patch_ptr = inject_patch(Copy_Text_VA, Text_Vsize, Text_Remote_RVA, pfps, pi.hProcess);
+    if (!Patch_ptr)
     {
-        Patch_ptr = inject_patch(Copy_Text_VA, Text_Vsize, Text_Remote_RVA, pfps, pi.hProcess);//patch inject 
-        if (Patch_ptr == NULL)
-        {
-            printf_s("Inject Patch Fail!\n\n");
-        }
+        printf_s("Inject Patch Fail!\n\n");
     }
 
     VirtualFree(_mbase_PE_buffer, 0, MEM_RELEASE);
@@ -625,27 +613,27 @@ __offset_ok:
     if (hThread)
         CloseHandle(hThread);
 
+    // 主循环：监控游戏进程并同步FPS值
     DWORD dwExitCode = STILL_ACTIVE;
-    uint32_t fps = 0;
     while (dwExitCode == STILL_ACTIVE)
     {
         GetExitCodeProcess(pi.hProcess, &dwExitCode);
 
-        // 每两秒检查一次
+        // 每2秒检查一次
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        int fps = 0;
-        ReadProcessMemory(pi.hProcess, (LPVOID)pfps, &fps, sizeof(fps), nullptr);
-        if (fps == -1)
-            continue;
-        if (fps != TargetFPS)
+        
+        int current_fps = 0;
+        if (ReadProcessMemory(pi.hProcess, (LPVOID)pfps, &current_fps, sizeof(current_fps), nullptr))
         {
-            WriteProcessMemory(pi.hProcess, (LPVOID)pfps, &TargetFPS, sizeof(TargetFPS), nullptr);
-            //热修补循环
-            WriteProcessMemory(pi.hProcess, (LPVOID)Patch_ptr, &TargetFPS, 4, nullptr);
+            if (current_fps == -1)
+                continue;
+            // 如果游戏内FPS值与目标值不同，则通过shellcode写入新值
+            if (current_fps != TargetFPS)
+            {
+                // shellcode会在游戏进程内部完成修改
+                WriteProcessMemory(pi.hProcess, (LPVOID)Patch_ptr, &TargetFPS, 4, nullptr);
+            }
         }
-            
-
-
     }
 
     CloseHandle(pi.hProcess);
