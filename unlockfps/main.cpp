@@ -12,11 +12,16 @@
 #include <thread>
 #include <Psapi.h>
 #include "inireader.h"
+#include "game_registry.h"
 
 std::string GamePath{};
 int FpsValue = FPS_TARGET;
 int HideValue = 0;
 bool ShowConsole = true;
+bool HdrEnable = false;
+int HdrMax = 1000;
+int HdrScene = 300;
+int HdrUi = 350;
 
 DWORD StartPriority = 0;
 const std::vector<DWORD> PrioityClass = {
@@ -247,7 +252,11 @@ bool WriteConfig(std::string GamePath, int fps)
     content = "[Setting]\n";
     content += "Path=" + GamePath + "\n";
     content += "FPS=" + std::to_string(fps) + "\n";
-    content += "hide=" + std::to_string(HideValue);
+    content += "hide=" + std::to_string(HideValue) + "\n";
+    content += "hdr=" + std::to_string(HdrEnable ? 1 : 0) + "\n";
+    content += "hdr_max=" + std::to_string(HdrMax) + "\n";
+    content += "hdr_scene=" + std::to_string(HdrScene) + "\n";
+    content += "hdr_ui=" + std::to_string(HdrUi);
 
     DWORD written = 0;
     WriteFile(hFile, content.data(), content.size(), &written, nullptr);
@@ -262,6 +271,20 @@ void ApplyConsoleVisibility()
         return;
 
     ShowWindow(hConsole, ShowConsole ? SW_SHOW : SW_HIDE);
+}
+
+static void InitConsoleUtf8()
+{
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
+    const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE)
+        return;
+
+    DWORD mode = 0;
+    if (GetConsoleMode(hOut, &mode))
+        SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
 //Hotpatch - 注入shellcode到游戏进程
@@ -390,6 +413,16 @@ void LoadConfig()
         HideValue = reader.GetInteger("Setting", "hide", HideValue);
     }
     ShowConsole = (HideValue == 0);
+    HdrEnable = reader.GetBoolean("Setting", "hdr", HdrEnable);
+    HdrMax = static_cast<int>(reader.GetInteger("Setting", "hdr_max", HdrMax));
+    HdrScene = static_cast<int>(reader.GetInteger("Setting", "hdr_scene", HdrScene));
+    HdrUi = static_cast<int>(reader.GetInteger("Setting", "hdr_ui", HdrUi));
+    {
+        const GenshinHdrSettings clamped = ClampGenshinHdrSettings({ HdrEnable, HdrMax, HdrScene, HdrUi });
+        HdrMax = clamped.maxLuminance;
+        HdrScene = clamped.sceneLuminance;
+        HdrUi = clamped.uiLuminance;
+    }
 
     if (GetFileAttributesA(GamePath.c_str()) == INVALID_FILE_ATTRIBUTES)
     {
@@ -450,6 +483,8 @@ DWORD __stdcall Thread1(LPVOID p)
 }
 int main(int argc, char** argv)
 {
+    InitConsoleUtf8();
+
     std::atexit([] {
         if (ShowConsole)
             system("pause");
@@ -476,9 +511,18 @@ int main(int argc, char** argv)
 
     printf("FPS解锁 好用的话点个star吧 6.3\n");
     printf("https://github.com/xiaonian233/genshin-fps-unlock \n特别感谢winTEuser老哥 \n");
-    printf("游戏路径: %s\n\n", ProcessPath.c_str());
+    printf("游戏路径: %s\n", ProcessPath.c_str());
+    printf("HDR: %s (max=%d scene=%d ui=%d)\n\n",
+        HdrEnable ? "ON" : "OFF", HdrMax, HdrScene, HdrUi);
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));
     std::string procname = ProcessPath.substr(ProcessPath.find_last_of("\\") + 1);
+
+    {
+        GenshinHdrSettings hdrSettings{ HdrEnable, HdrMax, HdrScene, HdrUi };
+        std::string hdrError;
+        if (!ApplyGenshinHdrSettings(ProcessPath, hdrSettings, &hdrError))
+            printf("HDR 设置写入失败: %s\n", hdrError.c_str());
+    }
 
     DWORD pid = GetPID(procname);
     if (pid)

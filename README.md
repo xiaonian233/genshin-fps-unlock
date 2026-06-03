@@ -14,6 +14,14 @@ ver 6.6 未有新的更新 直接用最新release即可。
 - 若缺少hide项启动游戏会自动写入hide=0(显示窗口)
 - 修改hide=1后不会显示窗口直接启动游戏
 
+**HDR（参考 Starward 方案，写入游戏注册表）**
+- 在 `fps_config.ini` 的 `[Setting]` 中配置（启动游戏前自动写入注册表）：
+  - `hdr=1` 开启 / `hdr=0` 关闭
+  - `hdr_max` 峰值亮度（300–2000，默认 1000）
+  - `hdr_scene` 场景亮度（100–500，默认 300）
+  - `hdr_ui` UI 亮度（150–550，默认 350）
+- 需显示器支持 HDR，并在 Windows 显示设置中开启 HDR；多显示器时请将 HDR 显示器设为主屏
+
 **若您觉得好用的话，请给winTEuser老哥的版本
 （[点我进入](https://github.com/winTEuser/Genshin_StarRail_fps_unlocker/releases)），点上star进行支持**
  - **要是觉得本项目挺好用的话，也可以点个star支持一下**

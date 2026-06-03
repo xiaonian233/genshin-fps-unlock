@@ -1,0 +1,12 @@
+.vs/
+x64/
+unlockfps/x64/
+*.user
+*.suo
+*.obj
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.idb
+*.recipe
