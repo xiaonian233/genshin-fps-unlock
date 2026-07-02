@@ -1,4 +1,4 @@
-#define KEY_TOGGLE VK_END
+#define KEY_TOGGLE VK_F9
 #define KEY_INCREASE VK_UP
 #define KEY_INCREASE_SMALL VK_RIGHT
 #define KEY_DECREASE VK_DOWN
@@ -474,7 +474,7 @@ int main(int argc, char** argv)
     if (ProcessPath.length() < 8)
         return 0;
 
-    printf("FPS解锁 好用的话点个star吧 6.3\n");
+    printf("FPS解锁 好用的话点个star吧 6.7\n");
     printf("https://github.com/xiaonian233/genshin-fps-unlock \n特别感谢winTEuser老哥 \n");
     printf("游戏路径: %s\n\n", ProcessPath.c_str());
     ProcessDir = ProcessPath.substr(0, ProcessPath.find_last_of("\\"));

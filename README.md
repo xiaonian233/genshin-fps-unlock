@@ -1,7 +1,7 @@
 # 原神解锁FPS限制
 
 ver 6.7 未有新的更新 直接用最新release即可。
-<img width="1682" height="994" alt="image" src="https://github.com/user-attachments/assets/c15e8aa2-fc4f-40aa-aec6-472a9375ae21" />
+<img width="1729" height="969" alt="image" src="https://github.com/user-attachments/assets/db725152-86bd-4545-b539-5c02bbce994e" />
 
 
 
@@ -34,7 +34,7 @@ ver 6.7 未有新的更新 直接用最新release即可。
  - 解锁器不能关掉
 >使用管理员运行是因为游戏必须由解锁器启动，游戏本身就需要管理员权限了，所以负责启动的也是需要的
 ### 默认热键           PS:按键要按一次改一次，不是长按
-- **END** 开/关
+- **F9** 开/关
 - **右ctrl + 上方向键** 增大FPS上限 （+20）
 - **右ctrl + 右方向键** 增大FPS上限 （+2）
 - **右ctrl + 下方向键** 减少FPS上限 （-20）
