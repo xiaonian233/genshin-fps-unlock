@@ -18,6 +18,8 @@ int FpsValue = FPS_TARGET;
 int HideValue = 0;
 bool ShowConsole = true;
 
+constexpr const char *CONFIG_FILE = "fps_config.ini";
+
 DWORD StartPriority = 0;
 const std::vector<DWORD> PrioityClass = {
    REALTIME_PRIORITY_CLASS,
@@ -235,7 +237,7 @@ DWORD GetPID(std::string ProcessName)
 
 bool WriteConfig(std::string GamePath, int fps)
 {
-    HANDLE hFile = CreateFileA("fps_config.ini", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_HIDDEN, nullptr);
+    HANDLE hFile = CreateFileA(CONFIG_FILE, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_HIDDEN, nullptr);
     if (hFile == INVALID_HANDLE_VALUE)
     {
         DWORD code = GetLastError();
@@ -331,7 +333,7 @@ void LoadConfig()
     if (GetFileAttributesA("config") != INVALID_FILE_ATTRIBUTES)
         DeleteFileA("config");
 
-    INIReader reader("fps_config.ini");
+    INIReader reader(CONFIG_FILE);
     if (reader.ParseError() != 0)
     {
         printf("配置不存在\n请不要关闭此进程 - 然后手动开启游戏\n这只需要进行一次 - 用于获取游戏路径\n");
@@ -394,7 +396,7 @@ void LoadConfig()
     if (GetFileAttributesA(GamePath.c_str()) == INVALID_FILE_ATTRIBUTES)
     {
         printf("配置里的游戏路径改变了 - 开始重新配置\n");
-        DeleteFileA("config.ini");
+        DeleteFileA(CONFIG_FILE);
         LoadConfig();
     }
 }
