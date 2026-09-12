@@ -1,7 +1,8 @@
 # 原神解锁FPS限制
 
 ver 7.0 未有新的更新 直接用最新release即可。
-<img width="1729" height="969" alt="image" src="https://github.com/user-attachments/assets/db725152-86bd-4545-b539-5c02bbce994e" />
+
+<img width="1847" height="717" alt="image" src="https://github.com/user-attachments/assets/624e03ca-6447-47e8-98c5-1646e1eabe9d" />
 
 
 
